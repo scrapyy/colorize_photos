@@ -12,7 +12,7 @@ from tensorflow.python.framework.ops import get_default_graph
 from tensorflow.python.keras.applications.inception_resnet_v2 import InceptionResNetV2
 from tensorflow.python.keras.applications.resnet_v2 import preprocess_input
 
-from Utils import train_ids, IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS, TRAIN_PATH, SEED, TEST_SIZE, BATCH_SIZE
+from Utils import train_ids, IMG_HEIGHT, IMG_WIDTH, IMG_CHANNELS, TRAIN_PATH, SEED, TEST_SIZE, BATCH_SIZE, RESNET_PATH
 
 
 def training_data():
@@ -38,7 +38,7 @@ datagen = ImageDataGenerator(shear_range=0.2,
                              horizontal_flip=True)
 
 inception = InceptionResNetV2(weights=None, include_top=True)
-inception.load_weights('data/inception_resnet_v2_weights_tf_dim_ordering_tf_kernels.h5')
+inception.load_weights(RESNET_PATH)
 inception.graph = get_default_graph()
 
 def create_inception_embedding(grayscaled_rgb):
