@@ -7,16 +7,13 @@ def Colorize():
 
     # Encoder
     encoder_input = Input(shape=(256, 256, 1,))
-    encoder_output = Conv2D(128, (3, 3), activation='relu', padding='same', strides=1)(encoder_input)
-    encoder_output = MaxPooling2D((2, 2), padding='same')(encoder_output)
-    encoder_output = Conv2D(128, (4, 4), activation='relu', padding='same')(encoder_output)
-    encoder_output = Conv2D(128, (3, 3), activation='relu', padding='same', strides=1)(encoder_output)
-    encoder_output = MaxPooling2D((2, 2), padding='same')(encoder_output)
-    encoder_output = Conv2D(256, (4, 4), activation='relu', padding='same')(encoder_output)
-    encoder_output = Conv2D(256, (3, 3), activation='relu', padding='same', strides=1)(encoder_output)
-    encoder_output = MaxPooling2D((2, 2), padding='same')(encoder_output)
-    encoder_output = Conv2D(256, (4, 4), activation='relu', padding='same')(encoder_output)
+    encoder_output = Conv2D(64, (3, 3), activation='relu', padding='same', strides=2)(encoder_input)
+    encoder_output = Conv2D(128, (3, 3), activation='relu', padding='same')(encoder_output)
+    encoder_output = Conv2D(128, (3, 3), activation='relu', padding='same', strides=2)(encoder_output)
     encoder_output = Conv2D(256, (3, 3), activation='relu', padding='same')(encoder_output)
+    encoder_output = Conv2D(256, (3, 3), activation='relu', padding='same', strides=2)(encoder_output)
+    encoder_output = Conv2D(512, (3, 3), activation='relu', padding='same')(encoder_output)
+    encoder_output = Conv2D(512, (3, 3), activation='relu', padding='same')(encoder_output)
     encoder_output = Conv2D(256, (3, 3), activation='relu', padding='same')(encoder_output)
 
     # Fusion
@@ -27,13 +24,11 @@ def Colorize():
 
     # Decoder
     decoder_output = Conv2D(128, (3, 3), activation='relu', padding='same')(fusion_output)
+    decoder_output = UpSampling2D((2, 2))(decoder_output)
     decoder_output = Conv2D(64, (3, 3), activation='relu', padding='same')(decoder_output)
     decoder_output = UpSampling2D((2, 2))(decoder_output)
-    decoder_output = Conv2D(128, (3, 3), activation='relu', padding='same')(decoder_output)
-    decoder_output = UpSampling2D((2, 2))(decoder_output)
-    decoder_output = Conv2D(64, (4, 4), activation='relu', padding='same')(decoder_output)
-    decoder_output = Conv2D(64, (3, 3), activation='relu', padding='same')(decoder_output)
-    decoder_output = Conv2D(32, (2, 2), activation='relu', padding='same')(decoder_output)
+    decoder_output = Conv2D(32, (3, 3), activation='relu', padding='same')(decoder_output)
+    decoder_output = Conv2D(16, (3, 3), activation='relu', padding='same')(decoder_output)
     decoder_output = Conv2D(2, (3, 3), activation='tanh', padding='same')(decoder_output)
     decoder_output = UpSampling2D((2, 2))(decoder_output)
     return Model(inputs=[encoder_input, embed_input], outputs=decoder_output)

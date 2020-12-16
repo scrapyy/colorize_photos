@@ -5,9 +5,12 @@ from tensorflow.python import enable_eager_execution
 from tensorflow.python.framework.ops import disable_eager_execution
 from tensorflow.python.keras.callbacks import ReduceLROnPlateau, ModelCheckpoint
 import matplotlib.pyplot as plt
+from tensorflow.python.keras.losses import mean_squared_error
+from tensorflow.python.keras.saving.save import load_model
+
 from Data import training_data, create_inception_embedding, image_a_b_gen, prepare_test_data
 from Network import Colorize
-from Utils import train_ids, BATCH_SIZE, TEST_SIZE
+from Utils import train_ids, BATCH_SIZE, TEST_SIZE, TRAINING_SIZE
 import tensorflow as tf
 import numpy as np
 
@@ -25,16 +28,18 @@ checkpoint = ModelCheckpoint(filepath,
                              mode='min')
 model_callbacks = [learning_rate_reduction,checkpoint]
 model = Colorize()
-model.compile(optimizer='adam', loss='mean_squared_error', metrics=["accuracy"])
+model.compile(optimizer='adam', loss='mse', metrics=['mse'])
 model.summary()
 
 model.fit_generator(image_a_b_gen(x_train),
-                    epochs=5,
+                    epochs=300,
                     verbose=1,
-                    steps_per_epoch=5, callbacks=model_callbacks)
+                    steps_per_epoch=TRAINING_SIZE / BATCH_SIZE, callbacks=model_callbacks)
 
 model.save(filepath)
 model.save_weights("Art_Colorization_Weights.h5")
+
+
 
 x_test_input, x_test_input_embedded = prepare_test_data(x_test)
 
